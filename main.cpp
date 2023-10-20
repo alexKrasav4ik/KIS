@@ -14,7 +14,7 @@ int A, B, C, K;
 std::set<std::pair<int, int> > used;
 std::set<std::pair<int, int> > definitely_bad;
 std::pair<int, int> direction;
-bool my_flag = true;
+
 
 void change_direction(const std::pair<int, int>& target_direction) {
 	if (direction == target_direction)
@@ -128,8 +128,6 @@ std::pair<std::vector<int>, std::vector<std::pair<int, Action> > > Dijkstra(cons
 		}
 		v = index;
 	}
-	for (auto el : cost) std::cout << el << " ";
-	std::cout << "cost" << std::endl;
 	return std::make_pair(cost, parent);
 }
 
@@ -180,13 +178,13 @@ void solution_with_dijkstra(int x, int y) {
 		int start_index = 0;
 		for (auto el : good_points) {
 			for (int i = 0; i < DIRECTIONS_CNT; i++) {
-				graph[cur_pos + i].push_back(std::make_pair((cur_pos + i + 1) % DIRECTIONS_CNT, Action(2, 1, B)));
+				graph[cur_pos + i].push_back(std::make_pair((cur_pos + (i + 1) % DIRECTIONS_CNT), Action(2, 1, B)));
 				if (el == std::make_pair(x, y) && direction == directions[i]) {
 					start_index = cur_pos + i;
 				}
 			}
 			for (int i = 0; i < DIRECTIONS_CNT; i++) {
-				graph[cur_pos + i].push_back(std::make_pair((cur_pos + i - 1 + DIRECTIONS_CNT) % DIRECTIONS_CNT, Action(2, 0, B)));
+				graph[cur_pos + i].push_back(std::make_pair(cur_pos + (i - 1 + DIRECTIONS_CNT) % DIRECTIONS_CNT, Action(2, 0, B)));
 			}
 			for (int i = 0; i < DIRECTIONS_CNT; i++) {
 				std::pair<int, int> nxt = std::make_pair(x + directions[i].first, y + directions[i].second);
@@ -196,11 +194,6 @@ void solution_with_dijkstra(int x, int y) {
 			}
 			cur_pos += 4;
 		}
-		/*for (auto el : good_points) {
-			std::cout << el.first << " " << el.second << std::endl;
-		}
-		std::cout << "good points" << std::endl;*/
-
 		auto res = Dijkstra(graph, start_index);
 		auto cost = res.first;
 		auto parent = res.second;
@@ -245,12 +238,11 @@ void solve() {
 	int x, y, x1, y1;
 	std::cin >> x >> y >> x1 >> y1 >> A >> B >> C >> K;
 	direction = {x1 - x, y1 - y};
-	if (C > 4 * A + 4 * B || my_flag) {
+	if (C > 4 * A + 4 * B) {
 		dfs(x, y, 0, 0, true);
 		std::cout << 4 << " " << total_time << std::endl;
 	}
 	else {
-		// std::cout << "here" << std::endl;
 		solution_with_dijkstra(x, y);
 	}
 }
